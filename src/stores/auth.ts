@@ -14,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
   // todo session/local storage with https://github.com/prazdevs/pinia-plugin-persistedstate
 
   getters : {
-    loggedIn(state) {
+    isLoggedIn(state) {
       return !!state.email
     }
   },

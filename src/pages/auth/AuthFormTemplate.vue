@@ -20,7 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps<{
   form_id: string
@@ -29,11 +30,19 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['denied',])
+
+const route = useRoute()
+const router = useRouter()
+
 const submitting = ref(false);
 
 function onSubmit() {
   submitting.value = true
   props.submitAction()
+    .then(() => {
+      // redirect to specified in query (previous) page or to the index
+      router.push(String(route.query.next || '/'));
+    })
     .catch(() => {
       // shake form on error
       emit('denied');

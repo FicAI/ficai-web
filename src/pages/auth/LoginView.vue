@@ -1,5 +1,5 @@
 <template>
-  <AuthFormTemplate form_id="login" submit_label="Register!" :submit-action="submitAction">
+  <AuthFormTemplate form_id="login" submit_label="Sign in!" :submit-action="submitAction">
     <template v-slot:fields>
       <EmailField v-model="form.email"></EmailField>
       <PasswordField v-model="form.password"></PasswordField>

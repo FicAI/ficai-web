@@ -10,7 +10,8 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
+        <q-btn :to="{ name: 'login' }" label="login"></q-btn>
+        <q-btn :to="{ name: 'index' }" label="Index"></q-btn>
         <q-toolbar-title> Fic.ai </q-toolbar-title>
         <q-toggle
           v-model="darkMode"
@@ -20,14 +21,12 @@
           checked-icon="dark_mode"
           color="orange"
         />
-<!--        <div>Quasar v{{ $q.version }}</div>-->
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header> Sidebar </q-item-label>
-
       </q-list>
     </q-drawer>
 

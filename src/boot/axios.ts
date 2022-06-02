@@ -20,7 +20,7 @@ export default boot(({ app }) => {
   app.config.globalProperties.$axios = axios;
 
   app.config.globalProperties.$signals_api = signals_api;
-  app.config.globalProperties.web_api = web_api;
+  app.config.globalProperties.$web_api = web_api;
 });
 
 export { signals_api, web_api };

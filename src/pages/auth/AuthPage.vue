@@ -13,8 +13,8 @@
       <q-separator/>
       <q-card-section>
         <q-btn-group spread unelevated>
-          <q-btn :to="{ name: 'login' }" :outline="$route.name !== 'login'" color="primary" label="Log in"/>
-          <q-btn :to="{ name: 'register' }" :outline="$route.name !== 'register'" color="primary" label="Register"/>
+          <q-btn :to="{ name: 'login', query: { next: $route.query.next }}" :outline="$route.name !== 'login'" color="primary" label="Log in"/>
+          <q-btn :to="{ name: 'register', query: { next: $route.query.next } }" :outline="$route.name !== 'register'" color="primary" label="Register"/>
         </q-btn-group>
         <q-btn fab outline color="primary" label="OR" class="absolute-center dark-button">
           <q-tooltip>Forgot password?</q-tooltip>
