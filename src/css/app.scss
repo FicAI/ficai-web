@@ -1,0 +1,8 @@
+// app global css in SCSS form
+.body--dark .to-dark-mode {
+  background: var(--q-dark) !important;
+}
+
+.body--dark .text-primary {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
