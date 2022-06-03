@@ -10,10 +10,14 @@ declare module '@vue/runtime-core' {
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
-// good idea to move this instance creation inside of the
+// good idea to move this instance creation inside the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const signals_api = axios.create({ baseURL: 'http://127.0.0.1:8080/v1' });
+const signals_api = axios.create({
+  baseURL: 'http://localhost:8080/v1',
+  withCredentials: true,
+});
+
 const web_api = axios.create({ baseURL: 'http://127.0.0.1:8080/v1' });
 
 export default boot(({ app }) => {

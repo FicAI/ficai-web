@@ -11,7 +11,10 @@ export const useAuthStore = defineStore('auth', {
       email: null
     } as User
   ),
-  // todo session/local storage with https://github.com/prazdevs/pinia-plugin-persistedstate
+  persist: {
+    storage: window.localStorage,
+  },
+  // todo login check on init
 
   getters : {
     isLoggedIn(state) {
@@ -41,7 +44,6 @@ export const useAuthStore = defineStore('auth', {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': 'http://127.0.0.1:8000/', // todo only for local debug
               },
-              withCredentials: true,
             })
           .then(response => {
             // todo do something with response body when implemented
@@ -78,7 +80,6 @@ export const useAuthStore = defineStore('auth', {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': 'http://127.0.0.1:8000/', // todo only for local debug
               },
-              withCredentials: true,
             })
           .then(response => {
             // todo do something with response body when implemented
