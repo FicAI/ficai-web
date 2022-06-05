@@ -6,3 +6,10 @@
 .body--dark .text-primary {
   color: rgba(255, 255, 255, 0.7) !important;
 }
+
+@media(max-width: 380px){
+  .row > .col-xxs-12 {
+    height: auto;
+    width: 100%;
+  }
+}

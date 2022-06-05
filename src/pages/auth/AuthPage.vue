@@ -60,5 +60,4 @@ function onDenied() {
   background: var(--q-dark) !important;
 }
 
-
 </style>

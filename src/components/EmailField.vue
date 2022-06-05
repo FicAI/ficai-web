@@ -1,7 +1,6 @@
 <template>
   <q-input
     v-model="value"
-    @input="$emit('update:modelValue', $event.target.value)"
     outlined
     label="Email"
     hint="Your email address"

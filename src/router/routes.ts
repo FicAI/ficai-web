@@ -10,6 +10,7 @@ const routes: RouteRecordRaw[] = [
           { path: 'login', name: 'login', component: () => import('pages/auth/LoginView.vue') },
           { path: 'register', name: 'register', component: () => import('pages/auth/RegisterView.vue') },
         ]},
+      { path: 'tag-me', name: 'tag-me', component: () => import('pages/FicTagPage.vue'), meta: {requiresAuth: true}},
     ]},
   // 404
   {
