@@ -25,8 +25,8 @@ import FicTagsField from 'components/FicTagsField.vue';
 import {onMounted, Ref, ref, watch} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 const inputUrl = ref(route.query.url);
 const validUrl: Ref<string | null> = ref(null);

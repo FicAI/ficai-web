@@ -10,14 +10,17 @@
     multiple
     behavior="menu"
 
-    input-debounce="400"
+    :input-debounce="500"
     :options="available_tags"
     @filter="filterOptions"
-    @remove="onRemove"
+    @filter-abort="onFilterAbort"
+    @remove="onInputRemove"
 
     new-value-mode="add-unique"
     @new-value="onNewTag"
     @add="onAddTag"
+    @input-value="onTextInput"
+
     class="tag-selector"
     :disable="$attrs.disable"
   >
@@ -26,10 +29,10 @@
       <q-item dense v-bind="scope.itemProps">
         <q-item-section>
           <q-item-label class="row">
-            <div class="col-2">
+            <div class="col-3">
               <q-chip square dense :ripple="false" class="q-ml-none">{{ scope.opt.name }}</q-chip>
             </div>
-            <div class="col-10 row items-center"><span>Tag description</span></div>
+            <div class="col-9 row items-center"><span>Tag description</span></div>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -38,10 +41,13 @@
     <template v-slot:no-option="scope">
       <q-item>
         <q-item-section>
-          <q-item-label>
+          <q-item-label v-if="!!scope.inputValue">
             No tags found with such name! Create tag
             <q-chip square dense :ripple="false" class="ellipsis"><span class="ellipsis">{{ scope.inputValue }}</span></q-chip>
             ?
+          </q-item-label>
+          <q-item-label v-else>
+            No tags found!
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -55,16 +61,22 @@
         :duration="350"
       >
         <div
-          v-for="tag in tags"
+          v-for="(tag, index) in tags"
           :key="tag.name"
           class="col-md-3 col-sm-4 col-xs-6 col-xxs-12 q-pr-sm q-my-xs"
         >
           <FicTagChip
             :url="props.url"
             :tag-signal="tag"
+
             @click.stop.prevent
-            style="width: 100%"
+            @removeTag="selectRef.removeAtIndex(index)"
+            @updateTag="(key, value) => {tags[index][key] = value}"
+
             vote-on-mount
+            confirmLastVote
+
+            style="width: 100%"
           />
         </div>
       </transition-group>
@@ -75,11 +87,10 @@
 
 <script setup lang="ts">
 import FicTagChip from 'components/FicTagChip.vue'
+import {ApiSignal, TagSignal} from 'components/models';
+import { signals_api } from 'boot/axios';
 
 import {ref, Ref, onMounted, watch} from 'vue';
-import {ApiSignal, TagSignal} from 'components/models';
-
-import { signals_api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 
 const props = defineProps<{
@@ -94,6 +105,8 @@ const TAGS_ROUTE = '/tags'
 const tags = ref([]);
 const available_tags = ref([]);
 const selectRef: Ref = ref(null);
+
+let requestAbort: AbortController | null = null;
 
 // Converters
 
@@ -148,15 +161,16 @@ onMounted(() => {
 // Event handlers
 
 function filterOptions (val: string, update: (callbackFn: () => void) => void, abort: () => void) {
-  // todo fetch only N matching tags
-  console.log(tags.value)
-  signals_api.get(TAGS_ROUTE)
+  // todo fetch only N matching tags or optimize fetching in some way
+  requestAbort = new AbortController();
+  signals_api.get(TAGS_ROUTE, {signal: requestAbort.signal})
     .then(response => {
       update(() => {
         let tagOptions = response.data.tags;
+        console.log('filtering tags', tags.value, val, tagOptions)
         if (!!val) {
-          const needle = val.toLowerCase()
-          tagOptions = tagOptions.filter((v: string) => v.toLowerCase().indexOf(needle) > -1)
+          const needle = val.toLowerCase();
+          tagOptions = tagOptions.filter((v: string) => v.toLowerCase().indexOf(needle) > -1);
         }
         const currentTagNames = tags.value.map((v: TagSignal) => {return v.name.toLowerCase()});
         tagOptions = tagOptions.filter((v: string) => !currentTagNames.includes(v.toLowerCase()));
@@ -164,11 +178,19 @@ function filterOptions (val: string, update: (callbackFn: () => void) => void, a
         available_tags.value = tagOptions as never;
       })
     })
-    .catch()
+    .catch(() => {
+      abort();
+      // todo alerts?
+    })
+    .finally(() =>{
+      requestAbort = null;
+    })
 }
 
 function onFilterAbort(){
-  //
+  // todo check/test for race conditions
+  requestAbort?.abort()
+  console.log('Aborting filter request', requestAbort)
 }
 
 function onNewTag(inputValue: string, doneFn: (item: TagSignal | null, mode: string) => void){
@@ -187,7 +209,6 @@ function onNewTag(inputValue: string, doneFn: (item: TagSignal | null, mode: str
   } else {
     const newTag = tagToTagSignal(inputValue);
     doneFn(newTag, 'add-unique');
-    // todo request
   }
 }
 
@@ -202,22 +223,29 @@ function onAddTag(details: Details){
 }
 
 
-function onRemove(details: Details) {
+function onInputRemove(details: Details) {
   // prevent removal of tags that were voted on
-  // if (details.value.for === 0 && details.value.against === 0)
-
-  // selectRef.value.blur();
-  setTimeout(()=>{
-    tags.value.splice(details.index, 0, details.value as never);
-  }, 1) // yes this is very dirty, but it seems to me there is no better way with current Quasar API
+  console.log(details.value.for, details.value.against)
+  if (details.value.for !== 0 || details.value.against !== 0){
+    // selectRef.value.blur();
+    console.log('Prevented removal of', details)
+    setTimeout(()=>{
+      tags.value.splice(details.index, 0, details.value as never);
+    }, 1) // yes this is very dirty, but it seems to me there is no better way with current Quasar API
+  }
 }
 
+function onTextInput(value: string){
+  // todo work out proper regex for tags
+  const newValue = value.replace(/[^A-Za-z\d-_!/()*`]*/g, '');
+  selectRef.value.updateInputValue(newValue, true);
+}
 
 </script>
 
 <style>
 .tag-selector .q-field__append {
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 </style>

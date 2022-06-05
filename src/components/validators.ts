@@ -2,6 +2,18 @@ function isRequired (val: string) {
   return !!val || 'Field is required';
 }
 
+function minLength (min: number) {
+  return (val: string) => {
+    return val.length < min ? `This field must be at least ${min} characters long` : null
+  }
+}
+
+function maxLength (max: number) {
+  return (val: string) => {
+    return val.length > max ? `This field must be at most ${max} characters long` : null
+  }
+}
+
 function isValidEmail (val: string) {
   const emailPattern = /^(?=[a-zA-Z\d@._%+-]{6,254}$)[a-zA-Z\d._%+-]{1,64}@(?:[a-zA-Z\d-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
   return emailPattern.test(val) || 'Invalid email';
@@ -13,4 +25,4 @@ function isValidURL (val: string) {
   return urlPattern.test(val) || 'Invalid URL';
 }
 
-export {isRequired, isValidEmail, isValidURL, }
+export {isRequired, minLength, maxLength, isValidEmail, isValidURL, }

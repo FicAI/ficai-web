@@ -4,6 +4,7 @@
     outlined
     label="Email"
     hint="Your email address"
+    hide-hint
     type="email"
     autocomplete="email"
     lazy-rules

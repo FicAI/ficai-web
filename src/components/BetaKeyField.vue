@@ -4,6 +4,7 @@
     outlined
     label="Beta key"
     hint="Key for beta testing"
+    hide-hint
     type="text"
     lazy-rules
     :rules="[isRequired]"
