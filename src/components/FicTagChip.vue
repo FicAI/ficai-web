@@ -79,9 +79,6 @@ function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates
   loadingStates[source] = true;
   return signals_api.patch(SIGNALS_ROUTE, {url: props.url, [action]: [tagSignalRef.value.name]})
     .then(() => {
-      loadingStates[source] = false;
-      // setTimeout(() => {loadingStates[source] = false;}, 150)
-
       if (votedFor() && signal !== true){
         // if previously voted for, but now vote is not for
         tagSignalRef.value.for -= 1;
@@ -108,6 +105,10 @@ function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates
         tagSignalRef.value.my_signal = null;
       }
     })
+    .finally(() => {
+      // setTimeout(() => {loadingStates[source] = false;}, 150)
+      loadingStates[source] = false;
+    })
   // todo error handling
 }
 
@@ -122,7 +123,7 @@ function clearVote(source: keyof typeof loadingStates = 'any'){
         tag "${tagSignalRef.value.name}" will be deleted from this fic. Proceed?`,
       cancel: true,
       persistent: true,
-      color: "blue",
+      color: 'blue',
     })
       .onOk(() => {
         sendMySignal(null, source)

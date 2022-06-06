@@ -18,6 +18,8 @@ const signals_api = axios.create({
   withCredentials: true,
 });
 
+// todo default error handler with popups
+
 const web_api = axios.create({ baseURL: 'http://127.0.0.1:8080/v1' });
 
 export default boot(({ app }) => {
