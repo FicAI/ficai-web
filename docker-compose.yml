@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  quasar:
+    container_name: quasar
+    command: /bin/sh -c "npm install && quasar dev -p 8000"
+    build:
+      context: .
+      target: 'dev'
+    restart: unless-stopped
+    ports:
+      - '8000:8000'
+    volumes:
+      - '.:/app'
+
