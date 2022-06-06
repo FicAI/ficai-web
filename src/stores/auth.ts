@@ -42,7 +42,6 @@ export const useAuthStore = defineStore('auth', {
             {
               headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': 'http://127.0.0.1:8000/', // todo only for local debug
               },
             })
           .then(response => {
@@ -78,7 +77,6 @@ export const useAuthStore = defineStore('auth', {
             {
               headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': 'http://127.0.0.1:8000/', // todo only for local debug
               },
             })
           .then(response => {
