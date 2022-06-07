@@ -9,7 +9,7 @@
       class="q-px-sm q-py-none btn-chip"
     >
       -{{ tagSignalRef.against }}
-      <q-tooltip >Against: {{ tagSignalRef.against }}</q-tooltip>
+      <q-tooltip :delay="400">Against: {{ tagSignalRef.against }}</q-tooltip>
     </q-btn>
     <q-btn
       :disable="anyLoading()"
@@ -30,14 +30,14 @@
       class="q-px-sm q-py-none btn-chip"
     >
       +{{ tagSignalRef.for }}
-      <q-tooltip >For: {{ tagSignalRef.for }}</q-tooltip>
+      <q-tooltip :delay="400">For: {{ tagSignalRef.for }}</q-tooltip>
     </q-btn>
   </q-btn-group>
 </template>
 
 <script setup lang="ts">
 import {onMounted, reactive, toRef} from 'vue';
-import { useQuasar } from 'quasar';
+import {Notify, useQuasar} from 'quasar';
 
 import {TagSignal} from 'components/models';
 import { signals_api } from 'boot/axios';
