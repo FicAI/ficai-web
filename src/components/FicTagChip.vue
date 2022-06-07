@@ -173,3 +173,9 @@ onMounted(() => {
   background: var(--q-dark) !important;
 }
 </style>
+
+<style>
+.btn-chip.disabled, .btn-chip.disabled *{
+  cursor: pointer!important;
+}
+</style>
