@@ -24,7 +24,6 @@
     class="tag-selector"
     :disable="$attrs.disable"
   >
-
     <template v-slot:option="scope">
       <q-item dense v-bind="scope.itemProps">
         <q-item-section>

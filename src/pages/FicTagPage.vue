@@ -7,12 +7,17 @@
           :initial-url="$route.query.url"
           :debounce="500"
           @validValue="(value) => validUrl = value"
+          hint="Input fanfic URL to start tagging"
+          hide-hint
         />
-        <FicTagsField
-          v-model="ficTags"
-          :disable="!validUrl"
-          :url="validUrl"
-        />
+        <div>
+          <FicTagsField
+            v-model="ficTags"
+            :disable="!validUrl"
+            :url="validUrl"
+          />
+          <q-tooltip v-if="!validUrl" class="bg-red">Insert valid fanfic URL to start tagging</q-tooltip>
+        </div>
       </q-card-section>
     </q-card>
   </q-page>
