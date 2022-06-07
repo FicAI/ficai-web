@@ -1,5 +1,5 @@
 <template>
-  <q-btn-group size="sm">
+  <q-btn-group size="sm" :class="{'dimmed-tag': noVotes()}">
     <q-btn
       :outline="!votedAgainst()"
       :loading="loadingStates.against"
@@ -17,8 +17,16 @@
       size="sm"
       class="q-px-sm q-py-none btn-chip btn-chip-center ellipsis"
     >
-      <span class="ellipsis">{{ tagSignalRef.name }}</span>
-      <q-tooltip :delay="500" max-width="200px"> Very long tag description Very long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag description </q-tooltip>
+      <span class="ellipsis">{{ tagSignalRef.name }}
+        <q-badge v-if="noVotes()" floating color="yellow"> <q-icon name="warning" color="black"/></q-badge>
+      </span>
+      <q-tooltip v-if="!noVotes()" :delay="400" max-width="200px">
+        <span class="text-bold">{{ tagSignalRef.name }}</span>
+        Very long tag description Very long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag description
+      </q-tooltip>
+      <q-tooltip v-else :delay="400" class="bg-red">
+        <q-icon name="warning" /> <span class="text-bold">Failed to add this tag!</span> <br> Please try voting on it again.
+      </q-tooltip>
     </q-btn>
     <q-btn
       :outline="!votedFor()"
@@ -60,16 +68,25 @@ const loadingStates = reactive({
   'any': false,
 });
 
+
 function anyLoading(){
   return loadingStates.for || loadingStates.against || loadingStates.any;
 }
 
 function votedFor(){
-  return props.tagSignal.my_signal === true;
+  return tagSignalRef.value.my_signal === true;
 }
 
 function votedAgainst(){
-  return props.tagSignal.my_signal === false;
+  return tagSignalRef.value.my_signal === false;
+}
+
+// function votedNone(){
+//   return tagSignalRef.value.my_signal === null;
+// }
+
+function noVotes() {
+  return tagSignalRef.value.for === 0 && tagSignalRef.value.against === 0;
 }
 
 const SIGNALS_ROUTE = '/signals';
@@ -101,15 +118,27 @@ function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates
         tagSignalRef.value.against += 1;
         emit('updateTag', 'against', tagSignalRef.value.against);
       }
-      if (signal == null) {
+      if (signal === null) {
         tagSignalRef.value.my_signal = null;
       }
     })
+    .catch(error => {
+      let actionMessage: string
+      if (signal === null){
+        actionMessage = `erase vote ${tagSignalRef.value.my_signal === true ? 'for' : 'against'}`;
+      } else {
+        actionMessage = `add vote ${signal === true ? 'for' : 'against'}`;
+      }
+      Notify.create({
+        color: 'negative',
+        position: 'top',
+        message: `Failed to ${actionMessage} tag '${tagSignalRef.value.name}' : ${error.message}`,
+        icon: 'report_problem',
+      });
+    })
     .finally(() => {
-      // setTimeout(() => {loadingStates[source] = false;}, 150)
       loadingStates[source] = false;
     })
-  // todo error handling
 }
 
 function clearVote(source: keyof typeof loadingStates = 'any'){
@@ -128,7 +157,7 @@ function clearVote(source: keyof typeof loadingStates = 'any'){
       .onOk(() => {
         sendMySignal(null, source)
           .then(()=>{
-            emit('removeTag')
+            emit('removeTag');
           });
       })
   } else {
@@ -154,7 +183,7 @@ function toggleAgainst() {
 
 onMounted(() => {
   if (props.voteOnMount && tagSignalRef.value.for === 0 && tagSignalRef.value.against === 0){
-    console.log('SENT +', tagSignalRef.value.name)
+    console.log('SENT +', tagSignalRef.value.name);
     sendMySignal(true, 'for');
   }
 })
@@ -172,10 +201,29 @@ onMounted(() => {
 .body--dark .btn-chip.q-btn--outline, .body--dark .btn-chip-center {
   background: var(--q-dark) !important;
 }
+
+.btn-chip .q-badge{
+  top: 3px;
+  right: 3px;
+  padding: 2px;
+}
+.btn-chip .q-badge .q-icon{
+  font-size: 0.6rem;
+}
+
 </style>
 
 <style>
 .btn-chip.disabled, .btn-chip.disabled *{
   cursor: pointer!important;
 }
+
+.dimmed-tag {
+  opacity: 0.7;
+}
+
+.dimmed-tag .disabled {
+  opacity: 1 !important;
+}
+
 </style>
