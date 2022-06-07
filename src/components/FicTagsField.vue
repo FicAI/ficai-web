@@ -50,8 +50,7 @@
           </q-item-label>
         </q-item-section>
       </q-item>
-<!--      todo onclick-->
-      <q-item clickable v-else-if="!!scope.inputValue">
+      <q-item @click="onNewTagManual(scope.inputValue)" clickable v-ripple v-else-if="!!scope.inputValue">
         <q-item-section>
           <q-item-label>
             No tags found with such name! Create tag
@@ -117,6 +116,13 @@ const props = defineProps<{
 
 const $q = useQuasar();
 
+// fix for v-ripple directive errors
+// as per https://github.com/quasarframework/quasar/issues/13154#issuecomment-1113273509
+defineExpose({
+  $q,
+})
+
+
 const SIGNALS_ROUTE = '/signals'
 const TAGS_ROUTE = '/tags'
 
@@ -173,7 +179,6 @@ function fetchSignals() {
 }
 
 onMounted(() => {
-  // todo debounce
   fetchSignals();
   watch(()=>props.url, ()=> {
     fetchSignals();
@@ -215,7 +220,19 @@ function onFilterAbort(){
   console.log('Aborting filter request', requestAbort)
 }
 
-function onNewTag(inputValue: string, doneFn: (item: TagSignal | null, mode: string) => void){
+function onNewTagManual(inputValue: string){
+  onNewTag(inputValue, (item: TagSignal | null) => {
+    if (item === null){
+      return;
+    }
+    selectRef.value.add(item, true);
+    selectRef.value.updateInputValue('', true);
+    selectRef.value.hidePopup();
+    selectRef.value.blur();
+  })
+}
+
+function onNewTag(inputValue: string, doneFn: (item: TagSignal | null, mode?: string) => void){
   // convert string input into signal tag, send request
   if (tagsNames().includes(inputValue.toLowerCase())){
     doneFn(null, 'add-unique'); // must be called to add 'nothing'
