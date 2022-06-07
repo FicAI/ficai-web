@@ -144,7 +144,7 @@ function fetchSignals() {
       for (const [i, v] of response.data.tags.entries()){
         setTimeout(()=>{
           selectRef.value.add(apiToTagSignal(v), true);
-        }, (i*150)+1) // yes this is very dirty, but Quazar literally cannot add several elements at once
+        }, i*1) // yes this is very dirty, but Quazar literally cannot add several elements at once
       }
     })
     .catch()
