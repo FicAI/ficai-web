@@ -39,14 +39,32 @@
     </template>
 
     <template v-slot:no-option="scope">
-      <q-item>
+      <q-item v-if="tagsNames().includes(scope.inputValue.toLowerCase())">
         <q-item-section>
-          <q-item-label v-if="!!scope.inputValue">
+          <q-item-label>
+            Tag
+            <q-chip square dense :ripple="false" class="ellipsis">
+              <span class="ellipsis">{{ scope.inputValue }}</span>
+            </q-chip>
+            is already placed on this fic!
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+<!--      todo onclick-->
+      <q-item clickable v-else-if="!!scope.inputValue">
+        <q-item-section>
+          <q-item-label>
             No tags found with such name! Create tag
-            <q-chip square dense :ripple="false" class="ellipsis"><span class="ellipsis">{{ scope.inputValue }}</span></q-chip>
+            <q-chip square dense :ripple="false" class="ellipsis">
+              <span class="ellipsis">{{ scope.inputValue }}</span>
+            </q-chip>
             ?
           </q-item-label>
-          <q-item-label v-else>
+        </q-item-section>
+      </q-item>
+      <q-item v-else>
+        <q-item-section>
+          <q-item-label >
             No tags found!
           </q-item-label>
         </q-item-section>
@@ -107,6 +125,10 @@ const available_tags = ref([]);
 const selectRef: Ref = ref(null);
 
 let requestAbort: AbortController | null = null;
+
+function tagsNames(){
+  return tags.value.map((v: TagSignal) => {return v.name.toLowerCase()})
+}
 
 // Converters
 
@@ -172,7 +194,7 @@ function filterOptions (val: string, update: (callbackFn: () => void) => void, a
           const needle = val.toLowerCase();
           tagOptions = tagOptions.filter((v: string) => v.toLowerCase().indexOf(needle) > -1);
         }
-        const currentTagNames = tags.value.map((v: TagSignal) => {return v.name.toLowerCase()});
+        const currentTagNames = tagsNames();
         tagOptions = tagOptions.filter((v: string) => !currentTagNames.includes(v.toLowerCase()));
         tagOptions = tagOptions.map(tagToTagSignal);
         available_tags.value = tagOptions as never;
@@ -195,9 +217,7 @@ function onFilterAbort(){
 
 function onNewTag(inputValue: string, doneFn: (item: TagSignal | null, mode: string) => void){
   // convert string input into signal tag, send request
-  const tagNames = tags.value.map((v: TagSignal) => {return v.name.toLowerCase()});
-  console.log(inputValue, tagNames)
-  if (tagNames.includes(inputValue.toLowerCase())){
+  if (tagsNames().includes(inputValue.toLowerCase())){
     doneFn(null, 'add-unique'); // must be called to add 'nothing'
     selectRef.value.updateInputValue(''); // reset text input
     $q.notify({
