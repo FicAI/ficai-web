@@ -3,16 +3,19 @@
     v-model="value"
     ref="inputRef"
     @blur="onBlur"
+    @keydown.enter="onEnter"
+
+    lazy-rules="ondemand"
+    :rules="[isValidURL]"
+
     outlined
     label="Fanfic URL"
     type="text"
-    lazy-rules="ondemand"
-    :rules="[isValidURL]"
   >
     <template v-slot:prepend>
       <q-icon name="auto_stories" />
     </template>
-    </q-input>
+  </q-input>
 </template>
 
 <script setup lang="ts">
@@ -32,13 +35,14 @@ let inputRef = ref();
 function onBlur(){
   const isValid = inputRef.value.validate();
   console.log('Validating', isValid, value.value);
-  // if (isValid){
-  //   emit('validValue', value.value)
-  // }
   emit('validValue', isValid ? value.value : null)
   if (!value.value){
     inputRef.value.resetValidation();
   }
+}
+
+function onEnter(){
+  inputRef.value.blur();
 }
 
 // validate and pass initial value
