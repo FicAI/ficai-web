@@ -4,17 +4,11 @@ import { useAuthStore } from 'stores/auth';
 export default boot(async({ router }) => {
   const auth = useAuthStore();
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach(async (to, from) => {
     if (to.matched.some(record => record.meta.requiresAuth)){
-      if (!auth.isLoggedIn){
-        next({name: 'login', query: { next: to.fullPath } });
+      if (!await auth.checkAuth()){
+        return {name: 'login', query: { next: to.fullPath } };
       }
-      else {
-        next();
-      }
-    }
-    else {
-      next();
     }
   })
 });

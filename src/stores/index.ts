@@ -1,5 +1,7 @@
 import { store } from 'quasar/wrappers';
 import { createPinia } from 'pinia';
+
+import resetStore from 'stores/reset-store.js'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 /*
@@ -16,7 +18,8 @@ export default store((/* { ssrContext } */) => {
   const pinia = createPinia();
 
   // You can add Pinia plugins here
-  pinia.use(piniaPluginPersistedstate)
+  pinia.use(resetStore);
+  pinia.use(piniaPluginPersistedstate);
 
   return pinia;
 });

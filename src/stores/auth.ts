@@ -1,35 +1,54 @@
 import { defineStore } from 'pinia';
+import { Notify } from 'quasar';
+
 import { User } from 'components/models';
 import { signals_api } from 'boot/axios';
-import { Notify } from 'quasar';
 
 const LOGIN_ROUTE = '/sessions';
 const REGISTER_ROUTE = '/accounts';
+// const LOGOUT_ROUTE = '/'
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ( {
-      email: null
+      email: null,
+      confirmed: false,
     } as User
   ),
   persist: {
     storage: window.localStorage,
+    paths: ['email'],
   },
-  // todo login check on init
 
   getters : {
+    isLoggedInUnconfirmed(state){
+      return !state.confirmed && !!state.email
+    },
     isLoggedIn(state) {
-      return !!state.email
-    }
+      return state.confirmed && !!state.email
+    },
   },
 
   actions: {
     setUser(email: string) {
+      this.confirmed = true;
       this.email = email;
     },
 
-    clearUser() {
-      this.email = null;
+    async checkAuth(): Promise<boolean>{
+      if (this.isLoggedInUnconfirmed){
+        if (await this.check()) {
+          this.confirmed = true;
+        } else {
+          this.$reset();
+        }
+      }
+      return this.isLoggedIn;
     },
+
+    // clearUser() {
+    //   this.email = null;
+    // },
 
     // APi actions:
 
@@ -53,10 +72,10 @@ export const useAuthStore = defineStore('auth', {
               message: `Logged in! Welcome, ${email}`,
               icon: 'done',
             });
-            resolve()
+            resolve();
           })
           .catch(error => {
-            this.clearUser(); // just to be sure
+            this.$reset(); // just to be sure
             Notify.create({
               color: 'negative',
               position: 'top',
@@ -88,10 +107,10 @@ export const useAuthStore = defineStore('auth', {
               message: `Successfully registered! Welcome, ${email}`,
               icon: 'done',
             });
-            resolve()
+            resolve();
           })
           .catch(error => {
-            this.clearUser(); // just to be sure
+            this.$reset(); // just to be sure
             Notify.create({
               color: 'negative',
               position: 'top',
@@ -102,6 +121,34 @@ export const useAuthStore = defineStore('auth', {
           })
       })
     },
+
+    check(): Promise<boolean> {
+      return new Promise((resolve, reject) => {
+        // todo make and use designated route for login check
+        return signals_api.get('/signals', {params: {url: ''}})
+          .then(() => {
+            resolve(true);
+          })
+          .catch((error) => {
+            Notify.create({
+              color: 'negative',
+              position: 'top',
+              message: `Login confirmation failed: ${error.message}`,
+              icon: 'report_problem',
+            });
+            resolve(false);
+          })
+      })
+    },
+
+    // logout(): Promise<void> {
+    //   return new Promise((resolve, reject) => {
+    //     // todo logout request to the server
+    //     // Cookies.remove(COOKIE_NAME, COOKIE_OPTIONS);
+    //     this.$reset()
+    //     resolve();
+    //   })
+    // }
   }
 
 })

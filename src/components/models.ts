@@ -1,5 +1,6 @@
 export interface User {
   email: string | null;
+  confirmed: boolean;
 }
 
 export interface TagSignal {
