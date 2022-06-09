@@ -1,34 +1,13 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="to-dark-mode">
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-        <q-btn :to="{ name: 'login' }" label="login"></q-btn>
-        <q-btn :to="{ name: 'index' }" label="Index"></q-btn>
-        <q-toolbar-title> Fic.ai </q-toolbar-title>
-        <q-toggle
-          v-model="darkMode"
-          @update:model-value="updateDarkMode(darkMode)"
-          size="md"
-          unchecked-icon="light_mode"
-          checked-icon="dark_mode"
-          color="orange"
-        />
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" bordered>
-      <q-list>
-        <q-item-label header> Sidebar </q-item-label>
-      </q-list>
-    </q-drawer>
+  <q-layout view="lHh LpR lFf">
+    <MainHeader @drawerToggle="drawer.toggle()"></MainHeader>
+    <MainDrawer ref="drawer">
+      <!--        todo make a DrawerItem component-->
+      <q-item clickable :to="{ name: 'tag-me' }">
+        <q-item-section avatar><q-icon name="sell" /></q-item-section>
+        <q-item-section>Tag a fic!</q-item-section>
+      </q-item>
+    </MainDrawer>
 
     <q-page-container>
       <router-view v-slot="{ Component }">
@@ -47,23 +26,15 @@
 </template>
 
 <script setup lang="ts">
+import MainHeader from 'components/MainHeader.vue';
+import MainDrawer from 'components/MainDrawer.vue';
+
 import { ref } from 'vue';
-import { useQuasar } from 'quasar';
 
-const $q = useQuasar();
-const darkMode = ref($q.dark.isActive);
-const leftDrawerOpen = ref(false);
-
-function updateDarkMode(state: boolean) {
-  $q.dark.set(state);
-}
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
-
+const drawer = ref(null);
 </script>
 
 <style scoped>
 
 </style>
+

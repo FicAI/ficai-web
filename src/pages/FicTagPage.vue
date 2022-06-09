@@ -39,7 +39,7 @@ const ficTags = ref([]);
 
 
 onMounted(()=>{
-  watch(inputUrl, (url, prevUrl) => {
+  watch(inputUrl, (url) => {
     const query = {...route.query}
     if (!!url){
       query.url = url;
