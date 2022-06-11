@@ -15,7 +15,7 @@
       <slot></slot>
       <q-toggle
         v-model="darkMode"
-        @update:model-value="updateDarkMode(darkMode)"
+        @update:model-value="preferences.setDarkMode(darkMode)"
         size="md"
         unchecked-icon="light_mode"
         checked-icon="dark_mode"
@@ -27,15 +27,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { useUserPreferencesStore } from 'stores/preferences';
 
-const $q = useQuasar();
-const darkMode = ref($q.dark.isActive);
-
-function updateDarkMode(state: boolean) {
-  // todo set header mobile
-  $q.dark.set(state);
-}
+const preferences = useUserPreferencesStore();
+const darkMode = ref(preferences.darkMode);
 </script>
 
 <style scoped>
