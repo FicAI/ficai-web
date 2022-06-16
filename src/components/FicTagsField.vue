@@ -1,104 +1,112 @@
 <template>
-  <q-select
-    v-model="tags"
-    ref="selectRef"
+  <div class="">
+    <q-field
+      v-show="tags.length>0"
 
-    label="Fanfic tags"
-    filled
-    use-input
-    use-chips
-    multiple
-    behavior="menu"
-
-    :input-debounce="500"
-    :options="available_tags"
-    @filter="filterOptions"
-    @filter-abort="onFilterAbort"
-    @remove="onInputRemove"
-
-    new-value-mode="add-unique"
-    @new-value="onNewTag"
-    @add="onAddTag"
-    @input-value="onTextInput"
-
-    class="tag-selector"
-    :disable="$attrs.disable"
-  >
-    <template v-slot:option="scope">
-      <q-item dense v-bind="scope.itemProps">
-        <q-item-section>
-          <q-item-label class="row">
-            <div class="col-3">
-              <q-chip square dense :ripple="false" class="q-ml-none">{{ scope.opt.name }}</q-chip>
-            </div>
-            <div class="col-9 row items-center"><span>Tag description</span></div>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </template>
-
-    <template v-slot:no-option="scope">
-      <q-item v-if="tagsNames().includes(scope.inputValue.toLowerCase())">
-        <q-item-section>
-          <q-item-label>
-            Tag
-            <q-chip square dense :ripple="false" class="ellipsis">
-              <span class="ellipsis">{{ scope.inputValue }}</span>
-            </q-chip>
-            is already placed on this fic!
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item @click="onNewTagManual(scope.inputValue)" clickable v-ripple v-else-if="!!scope.inputValue">
-        <q-item-section>
-          <q-item-label>
-            No tags found with such name! Create tag
-            <q-chip square dense :ripple="false" class="ellipsis">
-              <span class="ellipsis">{{ scope.inputValue }}</span>
-            </q-chip>
-            ?
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item v-else>
-        <q-item-section>
-          <q-item-label >
-            No tags found!
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </template>
-
-    <template v-slot:selected>
-      <transition-group
-        enter-active-class="animated fadeIn"
-        leave-active-class="animated fadeOut"
-        mode="out-in"
-        :duration="350"
-      >
-        <div
-          v-for="(tag, index) in tags"
-          :key="tag.name"
-          class="col-md-3 col-sm-4 col-xs-6 col-xxs-12 q-pr-sm q-my-xs"
+      outlined
+      readonly
+      class="tags-field q-pb-md"
+    >
+      <template v-slot:control>
+        <transition-group
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+          mode="out-in"
+          :duration="350"
         >
-          <FicTagChip
-            :url="props.url"
-            :tag-signal="tag"
+          <div class="row q-pt-sm" style="width: 100%">
+            <div
+              v-for="(tag, index) in tags"
+              :key="tag.name"
+              class="col-md-3 col-sm-4 col-xs-6 col-xxs-12 q-pr-sm q-pb-sm"
+            >
+              <FicTagChip
+                :url="props.url"
+                :tag-signal="tag"
+                @click.stop.prevent
+                @removeTag="selectRef.removeAtIndex(index)"
+                @updateTag="(key, value) => {tags[index][key] = value}"
+                vote-on-mount
+                confirmLastVote
+                style="width: 100%"
+              />
+            </div>
+          </div>
+        </transition-group>
+      </template>
+    </q-field>
 
-            @click.stop.prevent
-            @removeTag="selectRef.removeAtIndex(index)"
-            @updateTag="(key, value) => {tags[index][key] = value}"
+    <q-select
+      v-model="tags"
+      ref="selectRef"
 
-            vote-on-mount
-            confirmLastVote
+      label="Add new tags"
+      outlined
+      use-input
+      use-chips
+      multiple
+      hide-selected
+      behavior="menu"
 
-            style="width: 100%"
-          />
-        </div>
-      </transition-group>
-      <div class="col-12"></div>
-    </template>
-  </q-select>
+      :input-debounce="500"
+      :options="available_tags"
+      @filter="filterOptions"
+      @filter-abort="onFilterAbort"
+
+      new-value-mode="add-unique"
+      @new-value="onNewTag"
+      @add="onAddTag"
+      @input-value="onTextInput"
+
+      class="tag-selector"
+      :disable="$attrs.disable"
+    >
+      <template v-slot:option="scope">
+        <q-item dense v-bind="scope.itemProps">
+          <q-item-section>
+            <q-item-label class="row">
+              <div class="col-3">
+                <q-chip square dense :ripple="false" class="q-ml-none">{{ scope.opt.name }}</q-chip>
+              </div>
+              <div class="col-9 row items-center"><span>Tag description</span></div>
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+
+      <template v-slot:no-option="scope">
+        <q-item v-if="tagsNames().includes(scope.inputValue.toLowerCase())">
+          <q-item-section>
+            <q-item-label>
+              Tag
+              <q-chip square dense :ripple="false" class="ellipsis">
+                <span class="ellipsis">{{ scope.inputValue }}</span>
+              </q-chip>
+              is already placed on this fic!
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item @click="onNewTagManual(scope.inputValue)" clickable v-ripple v-else-if="!!scope.inputValue">
+          <q-item-section>
+            <q-item-label>
+              No tags found with such name! Create tag
+              <q-chip square dense :ripple="false" class="ellipsis">
+                <span class="ellipsis">{{ scope.inputValue }}</span>
+              </q-chip>
+              ?
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-else>
+          <q-item-section>
+            <q-item-label >
+              No tags found!
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-select>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -258,19 +266,6 @@ function onAddTag(details: Details){
   available_tags.value.splice(available_tags.value.indexOf(details.value as never), 1);
 }
 
-
-function onInputRemove(details: Details) {
-  // prevent removal of tags that were voted on
-  console.log(details.value.for, details.value.against)
-  if (details.value.for !== 0 || details.value.against !== 0){
-    // selectRef.value.blur();
-    console.log('Prevented removal of', details)
-    setTimeout(()=>{
-      tags.value.splice(details.index, 0, details.value as never);
-    }, 1) // yes this is very dirty, but it seems to me there is no better way with current Quasar API
-  }
-}
-
 function onTextInput(value: string){
   // todo work out proper regex for tags
   const newValue = value.replace(/[^A-Za-z\d-_!/()*`]*/g, '');
@@ -280,8 +275,14 @@ function onTextInput(value: string){
 </script>
 
 <style>
-.tag-selector .q-field__append {
-  padding-left: 0;
+.tags-field .q-field__control {
+  padding-right: 0;
+  padding-left: 8px;
+}
+
+.tags-field .q-field__native  {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 </style>

@@ -21,7 +21,7 @@
         <q-badge v-if="noVotes()" floating color="yellow"> <q-icon name="warning" color="black"/></q-badge>
       </span>
       <q-tooltip v-if="!noVotes()" :delay="400" max-width="200px">
-        <span class="text-bold">{{ tagSignalRef.name }}</span>
+        <span class="text-bold text-center">{{ tagSignalRef.name }}</span> <br>
         Very long tag description Very long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag description
       </q-tooltip>
       <q-tooltip v-else :delay="400" class="bg-red">
@@ -89,6 +89,10 @@ function noVotes() {
   return tagSignalRef.value.for === 0 && tagSignalRef.value.against === 0;
 }
 
+// function totalRating() {
+//   return tagSignalRef.value.for - tagSignalRef.value.against;
+// }
+
 const SIGNALS_ROUTE = '/signals';
 
 function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates = 'any'){
@@ -143,7 +147,8 @@ function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates
 
 function clearVote(source: keyof typeof loadingStates = 'any'){
   if (props.confirmLastVote &&
-    ((votedFor() && tagSignalRef.value.for === 1) || (votedAgainst() && tagSignalRef.value.against === 1))){
+    ((votedFor() && tagSignalRef.value.for === 1 && tagSignalRef.value.against === 0) ||
+      (votedAgainst() && tagSignalRef.value.against === 1 && tagSignalRef.value.for === 0))){
     // Ask user confirmation when it's the last vote left
     $q.dialog({
       title: 'Confirm tag deletion',
@@ -199,7 +204,7 @@ onMounted(() => {
   background: #e0e0e0 !important;
 }
 .body--dark .btn-chip.q-btn--outline, .body--dark .btn-chip-center {
-  background: var(--q-dark) !important;
+  background: var(--q-dark-page) !important;
 }
 
 .btn-chip .q-badge{
