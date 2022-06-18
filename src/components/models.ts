@@ -3,6 +3,10 @@ export interface User {
   confirmed: boolean;
 }
 
+export interface Preferences {
+  darkMode: boolean | null;
+}
+
 export interface TagSignal {
   name: string;
   my_signal: boolean | null;
