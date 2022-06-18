@@ -6,12 +6,12 @@
       readonly
       class="tags-field q-pb-md">
       <template v-slot:control>
-        <transition-group
-          enter-active-class="animated fadeIn"
-          leave-active-class="animated fadeOut"
-          mode="out-in"
-          :duration="350">
-          <div class="row q-pt-sm" style="width: 100%">
+        <div class="row q-pt-sm" style="width: 100%">
+          <transition-group
+            enter-active-class="animated fadeIn"
+            leave-active-class="animated fadeOut"
+            mode="out-in"
+            :duration="1000">
             <div
               v-for="(tag, index) in tags"
               :key="tag.name"
@@ -30,8 +30,8 @@
                 confirmLastVote
                 style="width: 100%" />
             </div>
-          </div>
-        </transition-group>
+          </transition-group>
+        </div>
       </template>
     </q-field>
 
