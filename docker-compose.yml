@@ -3,14 +3,8 @@ version: '3.9'
 services:
   quasar-spa:
     container_name: quasar-spa
-    command: /bin/sh -c "npm install && quasar dev -p 8000"
     build:
       context: .
-      target: 'dev'
     restart: unless-stopped
     ports:
       - '8000:8000'
-    volumes:
-      - '.:/app'
-    environment:
-      - CHOKIDAR_USEPOLLING=true

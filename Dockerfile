@@ -9,4 +9,5 @@ FROM dev as builder
 RUN npm install
 RUN quasar build
 
-# todo production host
+FROM dev as server
+ENTRYPOINT quasar serve dist/spa -p 8000 --history
