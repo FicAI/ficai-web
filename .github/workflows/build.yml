@@ -1,0 +1,34 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm i -g @quasar/cli
+          npm install
+
+      - name: Build SPA
+        run: |
+          quasar build
+      - name: Build BEX
+        run: |
+          quasar build --mode bex
+
+      - uses: actions/upload-artifact@v3
+        name: Upload built SPA artifact
+        with:
+          name: spa-artifact
+          path: dist/spa
+      - uses: actions/upload-artifact@v3
+        name: Upload built BEX artifact
+        with:
+          name: bex-artifact
+          path: dist/bex/Packaged.ficai-web.zip
