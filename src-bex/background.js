@@ -1,47 +1,49 @@
-
 chrome.browserAction.onClicked.addListener((/* tab */) => {
   // Opens our extension in a new browser window.
   // Only if a popup isn't defined in the manifest.
-  chrome.tabs.create({
-    url: chrome.extension.getURL('www/index.html')
-  }, (/* newTab */) => {
-    // Tab opened.
-  })
-})
+  chrome.tabs.create(
+    {
+      url: chrome.extension.getURL('www/index.html'),
+    },
+    (/* newTab */) => {
+      // Tab opened.
+    },
+  );
+});
 
 export default function (bridge /* , allActiveConnections */) {
   bridge.on('storage.get', event => {
-    const payload = event.data
+    const payload = event.data;
     if (payload.key === null) {
       chrome.storage.local.get(null, r => {
-        const result = []
+        const result = [];
 
         // Group the items up into an array to take advantage of the bridge's chunk splitting.
         for (const itemKey in r) {
-          result.push(r[itemKey])
+          result.push(r[itemKey]);
         }
-        bridge.send(event.eventResponseKey, result)
-      })
+        bridge.send(event.eventResponseKey, result);
+      });
     } else {
       chrome.storage.local.get([payload.key], r => {
-        bridge.send(event.eventResponseKey, r[payload.key])
-      })
+        bridge.send(event.eventResponseKey, r[payload.key]);
+      });
     }
-  })
+  });
 
   bridge.on('storage.set', event => {
-    const payload = event.data
+    const payload = event.data;
     chrome.storage.local.set({ [payload.key]: payload.data }, () => {
-      bridge.send(event.eventResponseKey, payload.data)
-    })
-  })
+      bridge.send(event.eventResponseKey, payload.data);
+    });
+  });
 
   bridge.on('storage.remove', event => {
-    const payload = event.data
+    const payload = event.data;
     chrome.storage.local.remove(payload.key, () => {
-      bridge.send(event.eventResponseKey, payload.data)
-    })
-  })
+      bridge.send(event.eventResponseKey, payload.data);
+    });
+  });
 
   /*
   // EXAMPLES

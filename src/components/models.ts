@@ -10,7 +10,7 @@ export interface TagSignal {
   against: number;
 }
 
-export interface ApiSignal{
+export interface ApiSignal {
   tag: string;
   signal: boolean | null;
   signalsFor: number;

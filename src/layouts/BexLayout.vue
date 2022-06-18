@@ -23,8 +23,8 @@ import { ref } from 'vue';
 
 const drawer = ref(null);
 
-function newTab(){
-  chrome.tabs.create({url: chrome.extension.getURL('www/index.html')});
+function newTab() {
+  chrome.tabs.create({ url: chrome.extension.getURL('www/index.html') });
 }
 </script>
 

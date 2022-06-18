@@ -1,13 +1,7 @@
 <template>
-  <q-drawer
-    bordered
-    v-model="open"
-    side="left"
-    :width="200"
-    :breakpoint="500"
-  >
+  <q-drawer bordered v-model="open" side="left" :width="200" :breakpoint="500">
     <q-list padding>
-      <div>logged in as {{auth.email}}</div>
+      <div>logged in as {{ auth.email }}</div>
       <slot></slot>
     </q-list>
   </q-drawer>
@@ -22,19 +16,17 @@ export default defineComponent({
     return {
       open: false,
       auth: useAuthStore(),
-    }
+    };
   },
   methods: {
     toggle() {
-      this.open = !this.open
+      this.open = !this.open;
     },
-    set(state: boolean){
-      this.open = state
-    }
+    set(state: boolean) {
+      this.open = state;
+    },
   },
-})
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

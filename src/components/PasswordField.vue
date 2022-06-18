@@ -9,12 +9,10 @@
     autocomplete="current-password"
     lazy-rules
     :rules="[isRequired, minLength(8), maxLength(64)]"
-    maxlength="64"
-  >
+    maxlength="64">
     <template v-slot:prepend>
       <q-icon name="lock" />
     </template>
-
   </q-input>
 </template>
 
@@ -24,9 +22,6 @@ import { isRequired, minLength, maxLength } from 'components/validators';
 
 import { ref } from 'vue';
 let value = ref(null);
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

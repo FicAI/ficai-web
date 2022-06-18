@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { Dark } from 'quasar'
-import { AddressbarColor } from 'quasar'
-
+import { Dark } from 'quasar';
+import { AddressbarColor } from 'quasar';
 
 export const useUserPreferencesStore = defineStore('preferences', {
   state: () => ({
@@ -15,24 +14,23 @@ export const useUserPreferencesStore = defineStore('preferences', {
     },
   },
 
-  getters: {
-  },
+  getters: {},
 
   actions: {
-    toggleDarkMode(){
+    toggleDarkMode() {
       this.setDarkMode(!this.darkMode);
     },
-    setDarkMode(value: boolean){
+    setDarkMode(value: boolean) {
       this.darkMode = value;
       this._applyDarkMode();
     },
-    _applyDarkMode(){
+    _applyDarkMode() {
       Dark.set(this.darkMode);
-      if (this.darkMode){
+      if (this.darkMode) {
         AddressbarColor.set('#1d1d1d');
       } else {
         AddressbarColor.set('#1976d2');
       }
-    }
-  }
+    },
+  },
 });

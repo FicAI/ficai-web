@@ -8,24 +8,23 @@ const LOGIN_ROUTE = '/sessions';
 const REGISTER_ROUTE = '/accounts';
 // const LOGOUT_ROUTE = '/'
 
-
 export const useAuthStore = defineStore('auth', {
-  state: () => ( {
+  state: () =>
+    ({
       email: null,
       confirmed: false,
-    } as User
-  ),
+    } as User),
   persist: {
     storage: window.localStorage,
     paths: ['email'],
   },
 
-  getters : {
-    isLoggedInUnconfirmed(state){
-      return !state.confirmed && !!state.email
+  getters: {
+    isLoggedInUnconfirmed(state) {
+      return !state.confirmed && !!state.email;
     },
     isLoggedIn(state) {
-      return state.confirmed && !!state.email
+      return state.confirmed && !!state.email;
     },
   },
 
@@ -35,8 +34,8 @@ export const useAuthStore = defineStore('auth', {
       this.email = email;
     },
 
-    async checkAuth(): Promise<boolean>{
-      if (this.isLoggedInUnconfirmed){
+    async checkAuth(): Promise<boolean> {
+      if (this.isLoggedInUnconfirmed) {
         if (await this.check()) {
           this.confirmed = true;
         } else {
@@ -57,12 +56,13 @@ export const useAuthStore = defineStore('auth', {
         return signals_api
           .post(
             LOGIN_ROUTE,
-            JSON.stringify({email: email, password: password}),
+            JSON.stringify({ email: email, password: password }),
             {
               headers: {
                 'Content-Type': 'application/json',
               },
-            })
+            },
+          )
           .then(response => {
             // todo do something with response body when implemented
             this.setUser(email);
@@ -83,8 +83,8 @@ export const useAuthStore = defineStore('auth', {
               icon: 'report_problem',
             });
             reject(error);
-          })
-      })
+          });
+      });
     },
 
     register(email: string, password: string, beta_key: string): Promise<void> {
@@ -92,12 +92,17 @@ export const useAuthStore = defineStore('auth', {
         return signals_api
           .post(
             REGISTER_ROUTE,
-            JSON.stringify({email: email, password: password, betaKey: beta_key}),
+            JSON.stringify({
+              email: email,
+              password: password,
+              betaKey: beta_key,
+            }),
             {
               headers: {
                 'Content-Type': 'application/json',
               },
-            })
+            },
+          )
           .then(response => {
             // todo do something with response body when implemented
             this.setUser(email);
@@ -118,18 +123,19 @@ export const useAuthStore = defineStore('auth', {
               icon: 'report_problem',
             });
             reject(error);
-          })
-      })
+          });
+      });
     },
 
     check(): Promise<boolean> {
       return new Promise((resolve, reject) => {
         // todo make and use designated route for login check
-        return signals_api.get('/signals', {params: {url: ''}})
+        return signals_api
+          .get('/signals', { params: { url: '' } })
           .then(() => {
             resolve(true);
           })
-          .catch((error) => {
+          .catch(error => {
             Notify.create({
               color: 'negative',
               position: 'top',
@@ -137,8 +143,8 @@ export const useAuthStore = defineStore('auth', {
               icon: 'report_problem',
             });
             resolve(false);
-          })
-      })
+          });
+      });
     },
 
     // logout(): Promise<void> {
@@ -149,6 +155,5 @@ export const useAuthStore = defineStore('auth', {
     //     resolve();
     //   })
     // }
-  }
-
-})
+  },
+});

@@ -1,13 +1,13 @@
 <template>
-  <q-btn-group size="sm" :class="{'dimmed-tag': noVotes()}">
+  <q-btn-group size="sm" :class="{ 'dimmed-tag': noVotes() }">
     <q-btn
       :outline="!votedAgainst()"
       :loading="loadingStates.against"
       :disable="anyLoading()"
-      @click="toggleAgainst" color="red"
+      @click="toggleAgainst"
+      color="red"
       size="sm"
-      class="q-px-sm q-py-none btn-chip"
-    >
+      class="q-px-sm q-py-none btn-chip">
       -{{ tagSignalRef.against }}
       <q-tooltip :delay="400">Against: {{ tagSignalRef.against }}</q-tooltip>
     </q-btn>
@@ -15,17 +15,25 @@
       :disable="anyLoading()"
       no-caps
       size="sm"
-      class="q-px-sm q-py-none btn-chip btn-chip-center ellipsis"
-    >
-      <span class="ellipsis">{{ tagSignalRef.name }}
-        <q-badge v-if="noVotes()" floating color="yellow"> <q-icon name="warning" color="black"/></q-badge>
+      class="q-px-sm q-py-none btn-chip btn-chip-center ellipsis">
+      <span class="ellipsis"
+        >{{ tagSignalRef.name }}
+        <q-badge v-if="noVotes()" floating color="yellow">
+          <q-icon name="warning" color="black"
+        /></q-badge>
       </span>
       <q-tooltip v-if="!noVotes()" :delay="400" max-width="200px">
-        <span class="text-bold text-center">{{ tagSignalRef.name }}</span> <br>
-        Very long tag description Very long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag descriptionVery long tag description
+        <span class="text-bold text-center">{{ tagSignalRef.name }}</span>
+        <br />
+        Very long tag description Very long tag descriptionVery long tag
+        descriptionVery long tag descriptionVery long tag descriptionVery long
+        tag descriptionVery long tag descriptionVery long tag descriptionVery
+        long tag description
       </q-tooltip>
       <q-tooltip v-else :delay="400" class="bg-red">
-        <q-icon name="warning" /> <span class="text-bold">Failed to add this tag!</span> <br> Please try voting on it again.
+        <q-icon name="warning" />
+        <span class="text-bold">Failed to add this tag!</span> <br />
+        Please try voting on it again.
       </q-tooltip>
     </q-btn>
     <q-btn
@@ -35,8 +43,7 @@
       @click="toggleFor"
       color="green"
       size="sm"
-      class="q-px-sm q-py-none btn-chip"
-    >
+      class="q-px-sm q-py-none btn-chip">
       +{{ tagSignalRef.for }}
       <q-tooltip :delay="400">For: {{ tagSignalRef.for }}</q-tooltip>
     </q-btn>
@@ -44,40 +51,39 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, toRef} from 'vue';
-import {Notify, useQuasar} from 'quasar';
+import { onMounted, reactive, toRef } from 'vue';
+import { Notify, useQuasar } from 'quasar';
 
-import {TagSignal} from 'components/models';
+import { TagSignal } from 'components/models';
 import { signals_api } from 'boot/axios';
 
 const props = defineProps<{
-  url: string
-  tagSignal: TagSignal
-  voteOnMount?: boolean
-  confirmLastVote?: boolean
+  url: string;
+  tagSignal: TagSignal;
+  voteOnMount?: boolean;
+  confirmLastVote?: boolean;
 }>();
 
-const emit = defineEmits(['updateTag', 'removeTag',])
+const emit = defineEmits(['updateTag', 'removeTag']);
 
-const $q = useQuasar()
+const $q = useQuasar();
 const tagSignalRef = toRef(props, 'tagSignal');
 
 const loadingStates = reactive({
-  'for': false,
-  'against': false,
-  'any': false,
+  for: false,
+  against: false,
+  any: false,
 });
 
-
-function anyLoading(){
+function anyLoading() {
   return loadingStates.for || loadingStates.against || loadingStates.any;
 }
 
-function votedFor(){
+function votedFor() {
   return tagSignalRef.value.my_signal === true;
 }
 
-function votedAgainst(){
+function votedAgainst() {
   return tagSignalRef.value.my_signal === false;
 }
 
@@ -95,23 +101,31 @@ function noVotes() {
 
 const SIGNALS_ROUTE = '/signals';
 
-function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates = 'any'){
-  const action: string = (signal === true) ? 'add' : (signal === false) ? 'rm' : 'erase';
+function sendMySignal(
+  signal: boolean | null,
+  source: keyof typeof loadingStates = 'any',
+) {
+  const action: string =
+    signal === true ? 'add' : signal === false ? 'rm' : 'erase';
   loadingStates[source] = true;
-  return signals_api.patch(SIGNALS_ROUTE, {url: props.url, [action]: [tagSignalRef.value.name]})
+  return signals_api
+    .patch(SIGNALS_ROUTE, {
+      url: props.url,
+      [action]: [tagSignalRef.value.name],
+    })
     .then(() => {
-      if (votedFor() && signal !== true){
+      if (votedFor() && signal !== true) {
         // if previously voted for, but now vote is not for
         tagSignalRef.value.for -= 1;
         emit('updateTag', 'for', tagSignalRef.value.for);
       }
-      if (votedAgainst() && signal !== false){
+      if (votedAgainst() && signal !== false) {
         // if previously voted against, but now vote is not against
         tagSignalRef.value.against -= 1;
         emit('updateTag', 'against', tagSignalRef.value.against);
       }
 
-      if (signal === true && !votedFor()){
+      if (signal === true && !votedFor()) {
         // if previously voted not for, but now vote is for
         tagSignalRef.value.my_signal = true;
         tagSignalRef.value.for += 1;
@@ -127,9 +141,11 @@ function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates
       }
     })
     .catch(error => {
-      let actionMessage: string
-      if (signal === null){
-        actionMessage = `erase vote ${tagSignalRef.value.my_signal === true ? 'for' : 'against'}`;
+      let actionMessage: string;
+      if (signal === null) {
+        actionMessage = `erase vote ${
+          tagSignalRef.value.my_signal === true ? 'for' : 'against'
+        }`;
       } else {
         actionMessage = `add vote ${signal === true ? 'for' : 'against'}`;
       }
@@ -142,29 +158,34 @@ function sendMySignal(signal: boolean | null, source: keyof typeof loadingStates
     })
     .finally(() => {
       loadingStates[source] = false;
-    })
+    });
 }
 
-function clearVote(source: keyof typeof loadingStates = 'any'){
-  if (props.confirmLastVote &&
-    ((votedFor() && tagSignalRef.value.for === 1 && tagSignalRef.value.against === 0) ||
-      (votedAgainst() && tagSignalRef.value.against === 1 && tagSignalRef.value.for === 0))){
+function clearVote(source: keyof typeof loadingStates = 'any') {
+  if (
+    props.confirmLastVote &&
+    ((votedFor() &&
+      tagSignalRef.value.for === 1 &&
+      tagSignalRef.value.against === 0) ||
+      (votedAgainst() &&
+        tagSignalRef.value.against === 1 &&
+        tagSignalRef.value.for === 0))
+  ) {
     // Ask user confirmation when it's the last vote left
     $q.dialog({
       title: 'Confirm tag deletion',
-      message:
-        `If you remove your vote${source != 'any' ? ' '+source : ''},
-        tag "${tagSignalRef.value.name}" will be deleted from this fic. Proceed?`,
+      message: `If you remove your vote${source != 'any' ? ' ' + source : ''},
+        tag "${
+          tagSignalRef.value.name
+        }" will be deleted from this fic. Proceed?`,
       cancel: true,
       persistent: true,
       color: 'blue',
-    })
-      .onOk(() => {
-        sendMySignal(null, source)
-          .then(()=>{
-            emit('removeTag');
-          });
-      })
+    }).onOk(() => {
+      sendMySignal(null, source).then(() => {
+        emit('removeTag');
+      });
+    });
   } else {
     sendMySignal(null, source);
   }
@@ -187,40 +208,45 @@ function toggleAgainst() {
 }
 
 onMounted(() => {
-  if (props.voteOnMount && tagSignalRef.value.for === 0 && tagSignalRef.value.against === 0){
+  if (
+    props.voteOnMount &&
+    tagSignalRef.value.for === 0 &&
+    tagSignalRef.value.against === 0
+  ) {
     console.log('SENT +', tagSignalRef.value.name);
     sendMySignal(true, 'for');
   }
-})
-
+});
 </script>
 
 <style scoped>
-.btn-chip-center{
+.btn-chip-center {
   width: 100% !important;
 }
 
-.btn-chip.q-btn--outline, .btn-chip-center{
+.btn-chip.q-btn--outline,
+.btn-chip-center {
   background: #e0e0e0 !important;
 }
-.body--dark .btn-chip.q-btn--outline, .body--dark .btn-chip-center {
+.body--dark .btn-chip.q-btn--outline,
+.body--dark .btn-chip-center {
   background: var(--q-dark-page) !important;
 }
 
-.btn-chip .q-badge{
+.btn-chip .q-badge {
   top: 3px;
   right: 3px;
   padding: 2px;
 }
-.btn-chip .q-badge .q-icon{
+.btn-chip .q-badge .q-icon {
   font-size: 0.6rem;
 }
-
 </style>
 
 <style>
-.btn-chip.disabled, .btn-chip.disabled *{
-  cursor: pointer!important;
+.btn-chip.disabled,
+.btn-chip.disabled * {
+  cursor: pointer !important;
 }
 
 .dimmed-tag {
@@ -230,5 +256,4 @@ onMounted(() => {
 .dimmed-tag .disabled {
   opacity: 1 !important;
 }
-
 </style>

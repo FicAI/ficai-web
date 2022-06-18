@@ -16,8 +16,7 @@
           enter-active-class="animated fadeInUp"
           leave-active-class="animated fadeOutUp"
           mode="out-in"
-          :duration="300"
-        >
+          :duration="300">
           <component :is="Component" />
         </transition>
       </router-view>
@@ -34,7 +33,4 @@ import { ref } from 'vue';
 const drawer = ref(null);
 </script>
 
-<style scoped>
-
-</style>
-
+<style scoped></style>

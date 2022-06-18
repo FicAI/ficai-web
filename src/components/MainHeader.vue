@@ -5,12 +5,9 @@
         flat
         dense
         round
-
         @click="$emit('drawerToggle')"
-
         icon="menu"
-        aria-label="Menu"
-      />
+        aria-label="Menu" />
       <q-toolbar-title> Fic.ai </q-toolbar-title>
       <slot></slot>
       <q-toggle
@@ -19,8 +16,7 @@
         size="md"
         unchecked-icon="light_mode"
         checked-icon="dark_mode"
-        color="orange"
-      />
+        color="orange" />
     </q-toolbar>
   </q-header>
 </template>
@@ -33,6 +29,4 @@ const preferences = useUserPreferencesStore();
 const darkMode = ref(preferences.darkMode);
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
