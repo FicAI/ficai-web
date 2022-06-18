@@ -45,6 +45,8 @@
       multiple
       hide-selected
       behavior="menu"
+      menu-anchor="bottom middle"
+      menu-self="top middle"
       :input-debounce="500"
       :options="available_tags"
       @filter="filterOptions"
