@@ -1,3 +1,5 @@
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/artem30801/ficai-web/master.svg)](https://results.pre-commit.ci/latest/github/artem30801/ficai-web/master)
+
 # Fic-ai (ficai-web)
 
 Collaborative tagging
@@ -22,8 +24,28 @@ BEX = Browser EXtension
 quasar dev -m bex
 ```
 
+### Pre-commit hooks
+Install:
+```bash
+pip install pre-commit
+```
 
-### Lint the files
+Run after you staged files to commit in git:
+```bash
+pre-commit run
+```
+
+Run on all files (staged or not):
+```bash
+pre-commit run --all-files
+```
+
+Install as git pre-commit hooks (will run automatically on git commit and prevent commit if failed)
+```bash
+pre-commit install
+```
+
+### Lint the files (use pre-commit instead)
 
 ```bash
 yarn lint
@@ -31,7 +53,7 @@ yarn lint
 npm run lint
 ```
 
-### Format the files
+### Format the files (use pre-commit instead)
 
 ```bash
 yarn format
