@@ -68,11 +68,11 @@
           <q-item-section>
             <q-item-label class="row">
               <div class="col-3">
-                <q-chip square dense :ripple="false" class="q-ml-none">{{
-                  scope.opt.name
-                }}</q-chip>
+                <q-chip square dense :ripple="false" class="q-ml-none ellipsis">
+                  <span class="ellipsis">{{ scope.opt.name }}</span>
+                </q-chip>
               </div>
-              <div class="col-9 row items-center">
+              <div class="col-9 q-pl-sm row items-center">
                 <span>Tag description</span>
               </div>
             </q-item-label>
