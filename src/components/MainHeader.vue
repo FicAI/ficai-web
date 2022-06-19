@@ -17,8 +17,19 @@
         size="md"
         unchecked-icon="light_mode"
         checked-icon="dark_mode"
-        indeterminate-icon="auto_mode"
-        color="orange" />
+        indeterminate-icon="brightness_medium"
+        color="orange">
+        <q-tooltip
+          self="center right"
+          anchor="center left"
+          transition-show="jump-left"
+          transition-hide="jump-right"
+          :offset="[-5, 0]"
+          :delay="250">
+          Dark mode:
+          {{ darkMode === null ? 'auto' : darkMode ? 'enabled' : 'disabled' }}
+        </q-tooltip>
+      </q-toggle>
     </q-toolbar>
   </q-header>
 </template>
@@ -42,11 +53,11 @@ function updateAddressBar(darkActive: boolean) {
 }
 
 onMounted(() => {
+  updateAddressBar($q.dark.isActive);
   // we need watch because native dark mode may be changed by user externally
   watch(toRef($q.dark, 'isActive'), darkActive => {
     updateAddressBar(darkActive);
   });
-  updateAddressBar($q.dark.isActive);
 });
 </script>
 
