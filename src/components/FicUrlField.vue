@@ -2,8 +2,12 @@
   <q-input
     v-model="value"
     ref="inputRef"
-    @blur="onBlur"
-    @keydown.enter="onEnter"
+    @blur="validate"
+    @keydown.enter="
+      () => {
+        $refs.inputRef.blur();
+      }
+    "
     lazy-rules="ondemand"
     :rules="[isValidURL]"
     outlined
@@ -15,36 +19,35 @@
   </q-input>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { isValidURL } from 'components/validators';
+import { QInput } from 'quasar';
 
-import { ref, onMounted } from 'vue';
+export default defineComponent({
+  data() {
+    return {
+      value: '',
+    };
+  },
+  methods: {
+    isValidURL(value: string) {
+      return isValidURL(value);
+    },
 
-const props = defineProps<{
-  initialUrl?: string | null;
-}>();
+    validate() {
+      const isValid = (this.$refs.inputRef as QInput).validate(this.value);
+      this.$emit('validValue', isValid ? this.value : null);
+      if (!this.value) {
+        (this.$refs.inputRef as QInput).resetValidation();
+      }
+    },
 
-const emit = defineEmits(['validValue']);
-
-let value = ref(props.initialUrl);
-let inputRef = ref();
-
-function onBlur() {
-  const isValid = inputRef.value.validate();
-  console.log('Validating', isValid, value.value);
-  emit('validValue', isValid ? value.value : null);
-  if (!value.value) {
-    inputRef.value.resetValidation();
-  }
-}
-
-function onEnter() {
-  inputRef.value.blur();
-}
-
-// validate and pass initial value
-onMounted(() => {
-  onBlur();
+    setUrl(url: string) {
+      this.value = url;
+      this.validate();
+    },
+  },
 });
 </script>
 

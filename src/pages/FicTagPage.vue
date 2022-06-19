@@ -4,7 +4,7 @@
       <q-card-section>
         <FicUrlField
           v-model="inputUrl"
-          :initial-url="$route.query.url"
+          ref="urlRef"
           :debounce="500"
           @validValue="onValidatedValue"
           :hint="!validUrl ? 'Input fanfic URL to start tagging' : void 0"
@@ -24,15 +24,21 @@
 import FicUrlField from 'components/FicUrlField.vue';
 import FicTagsField from 'components/FicTagsField.vue';
 
-import { Ref, ref } from 'vue';
+import { Ref, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 
-const inputUrl: Ref<string> = ref(route.query.url?.toString() || '');
+const inputUrl: Ref<string> = ref(getUrl());
 const validUrl: Ref<string | null> = ref(null);
 const ficTags = ref([]);
+
+const urlRef = ref();
+
+function getUrl() {
+  return route.query.url?.toString() || '';
+}
 
 function makeQuery(url: string | null) {
   const query = { ...route.query };
@@ -47,8 +53,23 @@ function makeQuery(url: string | null) {
 function onValidatedValue(value: string | null) {
   // called every time user 'submitted' url, valid or not
   validUrl.value = value;
-  router.push({ query: makeQuery(inputUrl.value) });
+  if (inputUrl.value != getUrl()) {
+    router.push({ query: makeQuery(inputUrl.value) });
+  }
 }
+
+onMounted(() => {
+  urlRef.value.setUrl(inputUrl.value); // to provide initial url validation
+
+  watch(route, () => {
+    const url = getUrl();
+    if (url == inputUrl.value) {
+      return;
+    }
+    inputUrl.value = url;
+    urlRef.value.setUrl(url);
+  });
+});
 </script>
 
 <style scoped></style>
