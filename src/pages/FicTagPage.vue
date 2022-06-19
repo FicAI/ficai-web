@@ -6,7 +6,7 @@
           v-model="inputUrl"
           :initial-url="$route.query.url"
           :debounce="500"
-          @validValue="value => (validUrl = value)"
+          @validValue="onValidatedValue"
           :hint="!validUrl ? 'Input fanfic URL to start tagging' : void 0"
           hide-bottom-space />
         <div class="q-mt-md" v-show="!!validUrl">
@@ -24,27 +24,31 @@
 import FicUrlField from 'components/FicUrlField.vue';
 import FicTagsField from 'components/FicTagsField.vue';
 
-import { onMounted, Ref, ref, watch } from 'vue';
+import { Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 
-const inputUrl = ref(route.query.url);
+const inputUrl: Ref<string> = ref(route.query.url?.toString() || '');
 const validUrl: Ref<string | null> = ref(null);
 const ficTags = ref([]);
 
-onMounted(() => {
-  watch(inputUrl, url => {
-    const query = { ...route.query };
-    if (!!url) {
-      query.url = url;
-    } else {
-      delete query.url;
-    }
-    router.replace({ query: query });
-  });
-});
+function makeQuery(url: string | null) {
+  const query = { ...route.query };
+  if (!!url) {
+    query.url = url;
+  } else {
+    delete query.url;
+  }
+  return query;
+}
+
+function onValidatedValue(value: string | null) {
+  // called every time user 'submitted' url, valid or not
+  validUrl.value = value;
+  router.push({ query: makeQuery(inputUrl.value) });
+}
 </script>
 
 <style scoped></style>
