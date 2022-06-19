@@ -1,17 +1,23 @@
 <template>
   <div class="">
     <q-field
-      v-show="tags.length > 0"
       outlined
+      v-model="noTags"
+      :label="
+        noTags === null
+          ? 'This fanfic has no tags yet'
+          : 'Fanfic tags: vote or add new'
+      "
       readonly
       class="tags-field q-pb-md">
       <template v-slot:control>
         <div class="row q-pt-sm" style="width: 100%">
           <transition-group
+            name="tags"
             enter-active-class="animated fadeIn"
             leave-active-class="animated fadeOut"
             mode="out-in"
-            :duration="1000">
+            :duration="350">
             <div
               v-for="(tag, index) in tags"
               :key="tag.name"
@@ -134,8 +140,10 @@ defineExpose({
 const SIGNALS_ROUTE = '/signals';
 const TAGS_ROUTE = '/tags';
 
+const noTags: Ref<false | null> = ref(false);
 const tags = ref([]);
 const available_tags = ref([]);
+
 const selectRef: Ref = ref(null);
 
 let requestAbort: AbortController | null = null;
@@ -170,8 +178,8 @@ function apiToTagSignal(apiData: ApiSignal) {
 
 function fetchSignals() {
   console.log('FETCH', props.url);
+  const wasEmpty = tags.value.length == 0;
   tags.value.length = 0;
-  // selectRef.value.reset();
   if (!props.url) {
     return;
   }
@@ -180,13 +188,19 @@ function fetchSignals() {
     .get(SIGNALS_ROUTE, { params: { url: props.url } })
     .then(response => {
       console.log('resp', response.data.tags);
-      for (const [i, v] of response.data.tags.entries()) {
-        setTimeout(() => {
-          selectRef.value.add(apiToTagSignal(v), true);
-        }, i * 1); // yes this is very dirty, but Quazar literally cannot add several elements at once
-      }
+      const processedTags: Array<never> =
+        response.data.tags.map(apiToTagSignal);
+      // we add timeout when field already had tags previously, so they can finish fadeout animation
+      setTimeout(
+        () => {
+          tags.value.push(...processedTags);
+          // needs to be null to make field label full-size
+          noTags.value = processedTags.length === 0 ? null : false;
+        },
+        wasEmpty ? 0 : 400,
+      );
     })
-    .catch();
+    .catch(); // todo alerts, blocking?
 }
 
 onMounted(() => {
