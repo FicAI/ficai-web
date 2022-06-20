@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row items-center justify-evenly">
+  <q-page class="row items-baseline justify-evenly q-pt-xl">
     <q-card class="q-pa-sm" style="width: 650px">
       <q-card-section>
         <FicUrlField
