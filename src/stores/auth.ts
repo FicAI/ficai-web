@@ -6,17 +6,17 @@ import { signals_api } from 'boot/axios';
 
 const LOGIN_ROUTE = '/sessions';
 const REGISTER_ROUTE = '/accounts';
-// const LOGOUT_ROUTE = '/'
 
 export const useAuthStore = defineStore('auth', {
   state: () =>
     ({
+      id: null,
       email: null,
       confirmed: false,
     } as User),
   persist: {
     storage: window.localStorage,
-    paths: ['email'],
+    paths: ['id', 'email'],
   },
 
   getters: {
@@ -29,8 +29,9 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    setUser(email: string) {
+    setUser(id: number, email: string) {
       this.confirmed = true;
+      this.id = id;
       this.email = email;
     },
 
@@ -44,10 +45,6 @@ export const useAuthStore = defineStore('auth', {
       }
       return this.isLoggedIn;
     },
-
-    // clearUser() {
-    //   this.email = null;
-    // },
 
     // APi actions:
 
@@ -64,12 +61,11 @@ export const useAuthStore = defineStore('auth', {
             },
           )
           .then(response => {
-            // todo do something with response body when implemented
-            this.setUser(email);
+            this.setUser(response.data.id, response.data.email);
             Notify.create({
               color: 'positive',
               position: 'top',
-              message: `Logged in! Welcome, ${email}`,
+              message: `Logged in! Welcome, ${response.data.email}`,
               icon: 'done',
             });
             resolve();
@@ -104,8 +100,7 @@ export const useAuthStore = defineStore('auth', {
             },
           )
           .then(response => {
-            // todo do something with response body when implemented
-            this.setUser(email);
+            this.setUser(response.data.id, response.data.email);
             Notify.create({
               color: 'positive',
               position: 'top',
@@ -128,11 +123,11 @@ export const useAuthStore = defineStore('auth', {
     },
 
     check(): Promise<boolean> {
-      return new Promise((resolve, reject) => {
-        // todo make and use designated route for login check
+      return new Promise(resolve => {
         return signals_api
-          .get('/signals', { params: { url: '' } })
-          .then(() => {
+          .get(LOGIN_ROUTE)
+          .then(response => {
+            this.setUser(response.data.id, response.data.email);
             resolve(true);
           })
           .catch(error => {
@@ -147,13 +142,25 @@ export const useAuthStore = defineStore('auth', {
       });
     },
 
-    // logout(): Promise<void> {
-    //   return new Promise((resolve, reject) => {
-    //     // todo logout request to the server
-    //     // Cookies.remove(COOKIE_NAME, COOKIE_OPTIONS);
-    //     this.$reset()
-    //     resolve();
-    //   })
-    // }
+    logout(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        return signals_api
+          .delete(LOGIN_ROUTE)
+          .then(() => {
+            this.$reset();
+            // this.router.push('/');
+            resolve();
+          })
+          .catch(error => {
+            Notify.create({
+              color: 'negative',
+              position: 'top',
+              message: `Logout failed: ${error.message}`,
+              icon: 'report_problem',
+            });
+            reject(error);
+          });
+      });
+    },
   },
 });

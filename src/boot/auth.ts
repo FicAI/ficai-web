@@ -4,7 +4,7 @@ import { useAuthStore } from 'stores/auth';
 export default boot(async ({ router }) => {
   const auth = useAuthStore();
 
-  router.beforeEach(async (to, from) => {
+  router.beforeEach(async to => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       if (!(await auth.checkAuth())) {
         if (to.matched[0].name === 'bex') {
