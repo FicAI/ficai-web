@@ -8,3 +8,23 @@ services:
     restart: unless-stopped
     ports:
       - '8000:8000'
+  dockerhost:
+    container_name: dockerhost
+    image: qoomon/docker-host:3.0.5
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    mem_limit: 8M
+    restart: on-failure
+  nginx:
+    container_name: nginx
+    image: nginx:1.21.6-alpine
+    restart: unless-stopped
+    security_opt:
+      - "no-new-privileges:true"
+    ports:
+      - '9000:80'
+    depends_on:
+      - dockerhost
+    volumes:
+      - './local/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro'

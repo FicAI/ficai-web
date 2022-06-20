@@ -2,7 +2,27 @@
 
 # Fic-ai (ficai-web)
 
-Collaborative tagging
+Collaborative tagging.
+
+## Running locally
+
+Depends on [ficai-signals-server], follow the instructions there to run it in
+docker-compose.
+
+To run everything here inside docker:
+
+```bash
+docker-compose up -d --build nginx quasar-spa
+```
+
+If you'd prefer to run outside of docker, only start `nginx` and then follow
+the instructions below:
+
+```bash
+docker-compose up -d nginx
+```
+
+Open `http://localhost:9000` in your browser.
 
 ## Install the dependencies
 
@@ -70,3 +90,5 @@ quasar build
 ### Customize the configuration
 
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+
+[ficai-signals-server]: https://github.com/ypoluektovich/ficai-signals-server/
