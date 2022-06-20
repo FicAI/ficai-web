@@ -27,6 +27,7 @@ import FicTagsField from 'components/FicTagsField.vue';
 
 import { Ref, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useMeta } from 'quasar';
 
 const route = useRoute();
 const router = useRouter();
@@ -84,6 +85,13 @@ onMounted(() => {
     inputUrl.value = url;
     urlRef.value.setUrl(url);
   });
+});
+
+useMeta(() => {
+  return {
+    title: validatedUrl.value || 'a fic',
+    titleTemplate: title => `Fic.ai - tagging ${title}`,
+  };
 });
 </script>
 
