@@ -216,24 +216,21 @@ onMounted(() => {
 // Event handlers
 
 function filterOptions(
-  val: string,
+  inputText: string,
   update: (callbackFn: () => void) => void,
   abort: () => void,
 ) {
   // todo fetch only N matching tags or optimize fetching in some way
   requestAbort = new AbortController();
   signals_api
-    .get(TAGS_ROUTE, { signal: requestAbort.signal })
+    .get(TAGS_ROUTE, {
+      signal: requestAbort.signal,
+      params: { q: inputText, limit: 50 },
+    })
     .then(response => {
       update(() => {
         let tagOptions = response.data.tags;
-        console.log('filtering tags', tags.value, val, tagOptions);
-        if (!!val) {
-          const needle = val.toLowerCase();
-          tagOptions = tagOptions.filter(
-            (v: string) => v.toLowerCase().indexOf(needle) > -1,
-          );
-        }
+        console.log('filtering tags', tags.value, inputText, tagOptions);
         const currentTagNames = tagsNames();
         tagOptions = tagOptions.filter(
           (v: string) => !currentTagNames.includes(v.toLowerCase()),
