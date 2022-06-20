@@ -273,6 +273,7 @@ function onNewTag(
   inputValue: string,
   doneFn: (item: TagSignal | null, mode?: string) => void,
 ) {
+  inputValue = inputValue.trim();
   // convert string input into signal tag, send request
   if (tagsNames().includes(inputValue.toLowerCase())) {
     doneFn(null, 'add-unique'); // must be called to add 'nothing'
@@ -312,7 +313,10 @@ function onRemoveTag(index: number) {
 
 function onTextInput(value: string) {
   // todo work out proper regex for tags
-  const newValue = value.replace(/[^A-Za-z\d-_!/()*`]*/g, '');
+  const newValue = value
+    .replace(/[^A-Za-z\d-_!/()*`\s]*/g, '')
+    .replace(/\s+/g, ' ')
+    .trimStart();
   selectRef.value.updateInputValue(newValue, true);
 }
 </script>
