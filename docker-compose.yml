@@ -21,7 +21,7 @@ services:
     image: nginx:1.21.6-alpine
     restart: unless-stopped
     security_opt:
-      - "no-new-privileges:true"
+      - 'no-new-privileges:true'
     ports:
       - '9000:80'
     depends_on:
