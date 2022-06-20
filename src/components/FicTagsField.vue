@@ -129,6 +129,8 @@ const props = defineProps<{
   url: string | null;
 }>();
 
+const emit = defineEmits(['fetching', 'ready']);
+
 const $q = useQuasar();
 
 // fix for v-ripple directive errors
@@ -184,9 +186,12 @@ function fetchSignals() {
     return;
   }
 
+  emit('fetching', true);
+
   signals_api
     .get(SIGNALS_ROUTE, { params: { url: props.url } })
     .then(response => {
+      emit('ready', true);
       console.log('resp', response.data.tags);
       const processedTags: Array<never> =
         response.data.tags.map(apiToTagSignal);
@@ -200,7 +205,19 @@ function fetchSignals() {
         wasEmpty ? 0 : 400,
       );
     })
-    .catch(); // todo alerts, blocking?
+    .catch(error => {
+      emit('ready', false);
+      // todo check error code
+      $q.notify({
+        color: 'negative',
+        position: 'top',
+        message: `Failed to load tags for this fic URL: ${error}`,
+        icon: 'report_problem',
+      });
+    })
+    .finally(() => {
+      emit('fetching', false);
+    });
 }
 
 onMounted(() => {

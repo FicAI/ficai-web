@@ -3,13 +3,14 @@
     v-model="value"
     ref="inputRef"
     @blur="validate"
+    @update:model-value="onInput"
     @keydown.enter="
       () => {
         $refs.inputRef.blur();
       }
     "
     lazy-rules="ondemand"
-    :rules="[isValidURL]"
+    :rules="[isValidUrl, isValidUrlState]"
     outlined
     label="Fanfic URL"
     type="text">
@@ -28,11 +29,25 @@ export default defineComponent({
   data() {
     return {
       value: '',
+      urlInvalidated: false,
     };
   },
+
   methods: {
-    isValidURL(value: string) {
+    onInput() {
+      this.urlInvalidated = false;
+    },
+
+    isValidUrl(value: string) {
       return isValidURL(value);
+    },
+
+    isValidUrlState() {
+      return !this.urlInvalidated || 'This URL is not supported!';
+    },
+
+    invalidateUrlState() {
+      this.urlInvalidated = true;
     },
 
     validate() {
@@ -45,6 +60,7 @@ export default defineComponent({
 
     setUrl(url: string) {
       this.value = url;
+      this.urlInvalidated = false;
       this.validate();
     },
   },

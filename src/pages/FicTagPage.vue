@@ -6,14 +6,15 @@
           v-model="inputUrl"
           ref="urlRef"
           :debounce="500"
+          :loading="tagsFetching"
           @validValue="onValidatedValue"
-          :hint="!validUrl ? 'Input fanfic URL to start tagging' : void 0"
+          :hint="!validatedUrl ? 'Input fanfic URL to start tagging' : void 0"
           hide-bottom-space />
-        <div class="q-mt-md" v-show="!!validUrl">
+        <div class="q-mt-md" v-show="!!validatedUrl && !!tagsReady">
           <FicTagsField
-            v-model="ficTags"
-            :disable="!validUrl"
-            :url="validUrl" />
+            @fetching="onFetching"
+            @ready="onTagsReady"
+            :url="validatedUrl" />
         </div>
       </q-card-section>
     </q-card>
@@ -31,10 +32,24 @@ const route = useRoute();
 const router = useRouter();
 
 const inputUrl: Ref<string> = ref(getUrl());
-const validUrl: Ref<string | null> = ref(null);
-const ficTags = ref([]);
+const validatedUrl: Ref<string | null> = ref(null);
+
+const tagsFetching: Ref<boolean> = ref(false);
+const tagsReady: Ref<boolean | null> = ref(null);
 
 const urlRef = ref();
+
+function onFetching(state: boolean) {
+  tagsFetching.value = state;
+}
+
+function onTagsReady(state: boolean) {
+  tagsReady.value = state;
+  if (!state) {
+    urlRef.value.invalidateUrlState();
+    urlRef.value.validate();
+  }
+}
 
 function getUrl() {
   return route.query.url?.toString() || '';
@@ -52,7 +67,7 @@ function makeQuery(url: string | null) {
 
 function onValidatedValue(value: string | null) {
   // called every time user 'submitted' url, valid or not
-  validUrl.value = value;
+  validatedUrl.value = value;
   if (inputUrl.value != getUrl()) {
     router.push({ query: makeQuery(inputUrl.value) });
   }
