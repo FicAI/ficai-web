@@ -26,7 +26,7 @@
                 :url="props.url"
                 :tag-signal="tag"
                 @click.stop.prevent
-                @removeTag="selectRef.removeAtIndex(index)"
+                @removeTag="onRemoveTag(index)"
                 @updateTag="
                   (key, value) => {
                     tags[index][key] = value;
@@ -300,6 +300,14 @@ function onAddTag(details: Details) {
     available_tags.value.indexOf(details.value as never),
     1,
   );
+  noTags.value = false;
+}
+
+function onRemoveTag(index: number) {
+  selectRef.value.removeAtIndex(index);
+  if (!tags.value.length) {
+    noTags.value = null;
+  }
 }
 
 function onTextInput(value: string) {
