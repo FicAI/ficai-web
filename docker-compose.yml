@@ -8,6 +8,16 @@ services:
     restart: unless-stopped
     ports:
       - '8000:8000'
+
+  quasar-build-bex:
+    container_name: quasar-build-bex
+    command: /bin/sh -c "quasar build -m bex"
+    build:
+      context: .
+      target: 'dev'
+    volumes:
+      - './dist:/app/dist'
+
   dockerhost:
     container_name: dockerhost
     image: qoomon/docker-host:3.0.5

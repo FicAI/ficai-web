@@ -15,6 +15,8 @@ To run everything here inside docker:
 docker-compose up -d --build nginx quasar-spa
 ```
 
+---
+
 If you'd prefer to run outside of docker, only start `nginx` and then follow
 the instructions below:
 
@@ -23,6 +25,16 @@ docker-compose up -d nginx
 ```
 
 Open `http://localhost:9000` in your browser.
+
+---
+
+To build browser extension:
+
+```bash
+docker-compose up --build quasar-build-bex
+```
+Built extension will at `./dist/bex/`
+
 
 ## Install the dependencies
 
