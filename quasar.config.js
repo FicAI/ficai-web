@@ -9,7 +9,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers');
-const env = require('dotenv').config().parsed;
+require('dotenv').config();
 
 module.exports = configure(function (ctx) {
   return {
@@ -64,7 +64,7 @@ module.exports = configure(function (ctx) {
       // publicPath: '/',
       // analyze: true,
       env: {
-        API_HOST: ctx.mode.bex ? env.BEX_API_HOST : '',
+        API_HOST: ctx.mode.bex ? process.env.BEX_API_HOST : '',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
