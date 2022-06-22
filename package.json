@@ -13,6 +13,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
     "events": "^3.3.0",
     "lodash.clonedeep": "^4.5.0",
     "pinia": "^2.0.11",

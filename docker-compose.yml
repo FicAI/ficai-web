@@ -17,6 +17,8 @@ services:
       target: 'dev'
     volumes:
       - './dist:/app/dist'
+    env_file:
+      - .env
 
   dockerhost:
     container_name: dockerhost

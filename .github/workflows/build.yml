@@ -1,5 +1,6 @@
 name: build
 on: [push, pull_request]
+
 jobs:
   build:
     name: Build frontend
@@ -19,6 +20,8 @@ jobs:
         run: |
           quasar build
       - name: Build BEX
+        env:
+          BEX_API_HOST: 'https://june.fic.ai'
         run: |
           quasar build --mode bex
 

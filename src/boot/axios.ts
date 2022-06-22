@@ -14,7 +14,7 @@ declare module '@vue/runtime-core' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const signals_api = axios.create({
-  baseURL: '/v1',
+  baseURL: process.env.API_HOST + '/v1',
   withCredentials: true,
 });
 
