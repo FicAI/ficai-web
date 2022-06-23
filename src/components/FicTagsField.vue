@@ -67,12 +67,12 @@
         <q-item dense v-bind="scope.itemProps">
           <q-item-section>
             <q-item-label class="row">
-              <div class="col-3">
+              <div class="col-sm-3 col-xs-5">
                 <q-chip square dense :ripple="false" class="q-ml-none ellipsis">
                   <span class="ellipsis">{{ scope.opt.name }}</span>
                 </q-chip>
               </div>
-              <div class="col-9 q-pl-sm row items-center">
+              <div class="col-sm-9 col-xs-7 q-pl-sm row items-center">
                 <span>Tag description</span>
               </div>
             </q-item-label>
