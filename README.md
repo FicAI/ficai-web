@@ -1,5 +1,5 @@
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/artem30801/ficai-web/master.svg)](https://results.pre-commit.ci/latest/github/artem30801/ficai-web/master)
-
+[![DeepScan grade](https://deepscan.io/api/teams/18072/projects/21401/branches/613255/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=18072&pid=21401&bid=613255)
 # Fic-ai (ficai-web)
 
 Collaborative tagging.
@@ -36,11 +36,10 @@ docker-compose up --build quasar-build-bex
 Built extension will at `./dist/bex/`
 
 
-## Install the dependencies
+### Install the dependencies for running outside of docker
 
 ```bash
-yarn
-# or
+npm i -g @quasar/cli
 npm install
 ```
 
@@ -80,16 +79,12 @@ pre-commit install
 ### Lint the files (use pre-commit instead)
 
 ```bash
-yarn lint
-# or
 npm run lint
 ```
 
 ### Format the files (use pre-commit instead)
 
 ```bash
-yarn format
-# or
 npm run format
 ```
 
