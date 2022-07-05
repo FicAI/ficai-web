@@ -99,3 +99,7 @@ quasar build
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
 
 [ficai-signals-server]: https://github.com/ypoluektovich/ficai-signals-server/
+
+## License
+
+ficai-web is licensed under the [MIT](LICENSE) license.
