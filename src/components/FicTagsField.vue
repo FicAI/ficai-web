@@ -2,6 +2,8 @@
   <div class="">
     <q-field
       outlined
+      :loading="$attrs.loading"
+      :disable="$attrs.disable"
       v-model="noTags"
       :label="
         noTags === null
@@ -42,6 +44,7 @@
     </q-field>
 
     <q-select
+      :disable="$attrs.disable"
       v-model="tags"
       ref="selectRef"
       label="Add new tags"
@@ -60,9 +63,7 @@
       new-value-mode="add-unique"
       @new-value="onNewTag"
       @add="onAddTag"
-      @input-value="onTextInput"
-      class="tag-selector"
-      :disable="$attrs.disable">
+      @input-value="onTextInput">
       <template v-slot:option="scope">
         <q-item dense v-bind="scope.itemProps">
           <q-item-section>
@@ -344,6 +345,10 @@ function onTextInput(value: string) {
 .tags-field .q-field__native {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.tags-field .q-field__append {
+  padding-right: 12px;
 }
 </style>
 

@@ -13,7 +13,7 @@
         <div class="q-mt-md" v-show="!!validatedUrl && !!tagsReady">
           <FicTagsField
             @fetching="onFetching"
-            @ready="onTagsReady"
+            @ready="onReady"
             :url="validatedUrl" />
         </div>
       </q-card-section>
@@ -44,7 +44,7 @@ function onFetching(state: boolean) {
   tagsFetching.value = state;
 }
 
-function onTagsReady(state: boolean) {
+function onReady(state: boolean) {
   tagsReady.value = state;
   if (!state) {
     urlRef.value.invalidateUrlState();
