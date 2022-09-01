@@ -65,6 +65,7 @@ module.exports = configure(function (ctx) {
       // analyze: true,
       env: {
         API_HOST: ctx.mode.bex ? process.env.BEX_API_HOST : '',
+        VERSION: process.env.VERSION,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

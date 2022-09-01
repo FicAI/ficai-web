@@ -3,6 +3,7 @@ on: [push, pull_request]
 
 env:
   BEX_API_HOST: 'https://june.fic.ai'
+  VERSION: 0.1.0-beta # todo grab tag/release automatically?
 
 jobs:
   build:

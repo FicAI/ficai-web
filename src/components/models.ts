@@ -8,6 +8,12 @@ export interface Preferences {
   darkMode: boolean | null;
 }
 
+export interface Version {
+  outdated: boolean | null;
+  retired: boolean | null;
+  lastChecked: number | null;
+}
+
 export interface TagSignal {
   name: string;
   my_signal: boolean | null;
